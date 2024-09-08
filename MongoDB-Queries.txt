@@ -1,0 +1,161 @@
+1)Create A dataBase And Switch To into
+-----------------------------------
+
+*use library
+test> use library
+switched to db library('switched to db library')
+
+*Create A Collection Name Is: Book-data;
+-----------------------------------------
+library> db.createCollection("Book-data");
+{ ok: 1 }
+
+*Insert a document into the "Book" collection
+library> db.Book.insertMany([
+    { 
+        title: "The Great gatsby",
+        author: "F.Scott fitzgerald", 
+        publish_year: 1925 
+    }, 
+    { 
+        title: "MongoDB: The Definitive Guide", 
+        author: "Kristina Chadorow", 
+        publish_year: 2013 
+    }, 
+    { 
+        title: "Learning MongoDB", 
+        author: "Amol Nayak", 
+        publish_year: 2014 
+    }, 
+    { 
+        title: "MongoDB In Action", 
+        author: "Kyle Banker", 
+        publish_year: 2016
+    }
+]);
+
+2)Read
+-------
+
+*Retrieve All Documents Into The "Book" collection
+library> db.Book.find();
+[
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b5'),
+    title: 'The Great gatsby',
+    author: 'F.Scott fitzgerald',
+    publish_year: 1925
+  },
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b6'),
+    title: 'MongoDB: The Definitive Guide',
+    author: 'Kristina Chadorow',
+    publish_year: 2013
+  },
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b7'),
+    title: 'Learning MongoDB',
+    author: 'Amol Nayak',
+    publish_year: 2014
+  },
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b8'),
+    title: 'MongoDB In Action',
+    author: 'Kyle Banker',
+    publish_year: 2016
+  },
+  {
+    _id: ObjectId('66dd4bd60d0053b1b916c9b9'),
+    title: 'Mastering MongoDB',
+    author: 'Alex Giamas',
+    publish_year: 2019
+  }
+]
+
+
+*Find And Display Only The Document Where The Author is "Kristina Chadorow"
+library> db.Book.find({author: "Kristina Chadorow"});
+[
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b6'),
+    title: 'MongoDB: The Definitive Guide',
+    author: 'Kristina Chadorow',
+    publish_year: 2013
+  }
+]
+
+*Fetch And Display The Document from The Earliest Published publish_year
+library> db.Book.find().sort({publish_year: 1}).limit(2);
+[
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b5'),
+    title: 'The Great gatsby',
+    author: 'F.Scott fitzgerald',
+    publish_year: 1925
+  },
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b6'),
+    title: 'MongoDB: The Definitive Guide',
+    author: 'Kristina Chadorow',
+    publish_year: 2013
+  }
+]
+
+3)Update
+--------
+
+*Update The Publish Year Of The Book With The Title "Learning MongoDB"
+library> db.Book.updateOne({title: "Learning MongoDB"},{$set: {publish_year: 2024}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+
+*Add a New Field "genre" With The Value "Mystery" To All Documents
+library> db.Book.updateMany({},{$set: {genre: "Mystery"}},{multi: true});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 5,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+
+4)Delete
+---------
+
+*Remove The Document With The Title "2013"
+library> db.Book.deleteOne({publish_year: 2013});
+{ acknowledged: true, deletedCount: 0 }
+
+*Delete All Documents Where The Publish Year Is Before 2000
+library> db.Book.deleteMany({publish_year: {$lt: 2000}});
+{ acknowledged: true, deletedCount: 1 }
+
+library> db.Book.find();
+[
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b7'),
+    title: 'Learning MongoDB',
+    author: 'Amol Nayak',
+    publish_year: 2024,
+    genre: 'Mystery'
+  },
+  {
+    _id: ObjectId('66dd4b690d0053b1b916c9b8'),
+    title: 'MongoDB In Action',
+    author: 'Kyle Banker',
+    publish_year: 2016,
+    genre: 'Mystery'
+  },
+  {
+    _id: ObjectId('66dd4bd60d0053b1b916c9b9'),
+    title: 'Mastering MongoDB',
+    author: 'Alex Giamas',
+    publish_year: 2019,
+    genre: 'Mystery'
+  }
+]
